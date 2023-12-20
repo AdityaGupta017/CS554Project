@@ -8,7 +8,7 @@ import xss from 'xss';
 import redis from 'redis';
 
 const client = redis.createClient();
-client.connect().then(() => {});
+// client.connect().then(() => {});
 
 router.post("/login", async (req, res) => {
     try {
