@@ -17,8 +17,8 @@ const SocialSignIn = () => {
 
       console.log("Entering user data to database");
         
-      await axios.post('http://localhost:3000/usersData/signup', userData);
-      await axios.post('http://localhost:3000/usersData/login', {
+      await axios.post('https://backend.musicmates.club/usersData/signup', userData);
+      await axios.post('https://backend.musicmates.club/usersData/login', {
         email: user.email,
       });
 

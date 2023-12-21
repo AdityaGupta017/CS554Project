@@ -106,7 +106,7 @@ function SignUp() {
 
       console.log('User created:', userCreated);
 
-      const serverResponse = await axios.post('http://localhost:3000/usersData/signUpUser', {
+      const serverResponse = await axios.post('https://backend.musicmates.club/usersData/signUpUser', {
         name: displayName.value,
         email: email.value,
         password: passwordOne.value

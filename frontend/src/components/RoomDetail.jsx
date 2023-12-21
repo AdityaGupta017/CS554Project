@@ -30,7 +30,7 @@ const RoomDetail = () => {
   const socketRef = useRef();
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:3000');
+    socketRef.current = io('https://backend.musicmates.club/');
     socketRef.current.emit('user_join', currentUser.displayName);
     return () => {
       socketRef.current.disconnect();
@@ -79,7 +79,7 @@ const RoomDetail = () => {
     const fetchRoomInfo = async () => {
         
       try {
-        const response = await axios.get(`http://localhost:3000/rooms/${roomId}`);
+        const response = await axios.get(`https://backend.musicmates.club/rooms/${roomId}`);
         const room = response.data;
         console.log('room is::::')
         console.log(room)

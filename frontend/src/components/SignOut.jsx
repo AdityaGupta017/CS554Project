@@ -22,7 +22,7 @@ const SignOut = () => {
       await doSignOut();
 
       
-      await axios.get('http://localhost:3000/usersData/logout');
+      await axios.get('https://backend.musicmates.club/usersData/logout');
       
       // Redirect to the Spotify logout URL
       redirectToSpotifyLogout();

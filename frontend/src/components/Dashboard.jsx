@@ -44,7 +44,7 @@ function Dashboard() {
     console.log('go to room detail');
 
     try {
-      const response = await axios.get(`http://localhost:3000/rooms/${roomCode}`);
+      const response = await axios.get(`https://backend.musicmates.club/rooms/${roomCode}`);
       const room = response.data;
       console.log('room is::::');
       console.log(room);
@@ -59,7 +59,7 @@ function Dashboard() {
 
   const handlePublicRooms = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/rooms/publicRooms');
+      const response = await axios.get('https://backend.musicmates.club/rooms/publicRooms');
       const rooms = response.data;
       console.log("PUBLIC ROOMS:", rooms)
       setPublicRoomsData(rooms);
@@ -78,7 +78,7 @@ function Dashboard() {
 
   const spotifySignOn = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3000/users/login');
+      const { data } = await axios.get('https://backend.musicmates.club/users/login');
       window.location.href = data;
       setLoading(false);
     } catch (e) {
@@ -88,7 +88,7 @@ function Dashboard() {
 
   const spotifyLogout = async () => {
     try {
-      const { data } = await axios.get('http://localhost:3000/usersData/logout');
+      const { data } = await axios.get('https://backend.musicmates.club/usersData/logout');
       localStorage.removeItem('access_token');
       localStorage.removeItem('user');
     } catch (e) {
