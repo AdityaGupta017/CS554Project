@@ -22,10 +22,7 @@ import roomRoutes from './rooms.js'
 import { application } from 'express';
 
 const constructorMethod = (app) => {
-    app.get('/', (req, res) => {
-        // Landing page
-        res.status(200).render('pages/landing', {title: 'Landing Page'});
-    });
+ 
     app.use('/users', userRoutes);
     app.use('/api', apiRoutes);
     app.use('/rooms',roomRoutes)
