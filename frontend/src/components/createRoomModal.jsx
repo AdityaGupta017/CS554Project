@@ -42,7 +42,7 @@ import '../CreateRoomModal.css'; // Assuming you have your styles in this CSS fi
 
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { Button, TextField, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import axios from 'axios';
 
 function CreateRoomModal(props) {
@@ -97,45 +97,39 @@ function CreateRoomModal(props) {
 
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <span className="close" onClick={props.onClose}>
-          &times;
-        </span>
+    <Dialog open={props.isOpen} onClose={props.onClose}>
+      <DialogTitle>Create Room</DialogTitle>
+      <DialogContent>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="roomName">Room Name</label>
-          <input
+          <span>Room Name</span>
+          <TextField
+            // label="Room Name"
             type="text"
-            id="roomName"
+            fullWidth
             value={roomName}
             onChange={handleRoomNameChange}
             required
+            margin="normal"
+            sx={{ input: { color: '#008080' }, label: { color: '#008080' } }}
           />
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="visibility"
-                checked={isPublic}
-                onChange={() => handleVisibilityChange("public")}
-              />
-              Public
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="visibility"
-                checked={!isPublic}
-                onChange={() => handleVisibilityChange("private")}
-              />
-              Private
-            </label>
-          </div>
-          <button type="submit">Create</button>
-          <button onClick={props.onClose}>Cancel</button>
+          <FormControl component="fieldset" margin="normal">
+            <FormLabel component="legend">Room Visibility</FormLabel>
+            <RadioGroup row name="visibility" value={isPublic ? "public" : "private"} onChange={handleVisibilityChange}>
+              <FormControlLabel value="public" control={<Radio />} label="Public" />
+              <FormControlLabel value="private" control={<Radio />} label="Private" />
+            </RadioGroup>
+          </FormControl>
+          <DialogActions>
+            <Button onClick={props.onClose} sx={{ bgcolor: '#40e0d0', '&:hover': { bgcolor: '#ff7f50' }, color: 'white' }}>
+              Cancel
+            </Button>
+            <Button type="submit" color="primary" sx={{ bgcolor: '#40e0d0', '&:hover': { bgcolor: '#ff7f50' }, color: 'white' }}>
+              Create
+            </Button>
+          </DialogActions>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

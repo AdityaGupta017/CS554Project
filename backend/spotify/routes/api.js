@@ -154,4 +154,32 @@ router.get('/playback-state', async (req, res) => {
 	}
 });
 
+router.post('/set-track', async (req, res) => {
+    console.log('In API Call: Set Track');
+	console.log(req.body)
+
+    const { trackUris , position } = req.body;
+	
+    const access_token = req.session.user.access_token;
+
+    const SET_PLAYER_URL = BASE_URL + '/me/player/play';
+
+    try {
+        await axios.put(SET_PLAYER_URL, {
+            uris: trackUris,
+			position_ms: position
+        }, {
+            headers: {
+                'Authorization': 'Bearer ' + access_token,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        // This Spotify endpoint returns nothing on success
+        return res.status(200).json({message: 'Successful Call to Set Track'});
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 export default router;

@@ -10,6 +10,20 @@ const exportedMethods = {
     return await roomCollection.find({}).toArray();
   },
 
+  async getAllPublicRooms() {
+    console.log("public rooms data route")
+    const roomCollection = await rooms();
+    const roomsData = await roomCollection.find({}).toArray();
+    let publicRooms=[]
+    for(let i=0;i<roomsData.length;i++){
+      if(!roomsData[i].isPrivate){
+        publicRooms.push(roomsData[i])
+      }
+    }
+    console.log("public rooms", publicRooms)
+    return publicRooms;
+  },
+
   async getRoomById(id) {
     // id = validation.checkId(id);
     const roomCollection = await rooms();
@@ -26,6 +40,7 @@ const exportedMethods = {
   async addRoom(title, adminID, isPrivate) {
     console.log('insideeee room yo')
     title = validation.checkString(title, 'Title');
+    console.log("private status",isPrivate)
     // adminID = validation.checkId(adminID, 'Admin ID');
 
     // userThatCreatedRoom = 'Get current logged in user id'

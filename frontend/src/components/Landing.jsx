@@ -1,33 +1,61 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Button from '@mui/material/Button';
-import '../App.css';
+import { Button, Typography, Box } from '@mui/material';
+import { styled } from '@mui/system';
+
+const PageContainer = styled('div')({
+  height: '100vh',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: '#ffe4e1', // Misty Rose background for the whole page
+});
+
+const Header = styled('header')({
+  width: '100%',
+  padding: '20px 0',
+  backgroundColor: '#008080', // Teal for the header
+  color: 'white',
+  textAlign: 'center',
+  marginBottom: '40px',
+});
+
+const CustomLink = styled(Link)({
+  textDecoration: 'none',
+  margin: '0 10px', 
+});
 
 function Landing() {
   return (
-    <div className='card'>
-      <h2>Welcome to Music Mates</h2>
-      <Link to='/signin'>
+    <PageContainer>
+      
+      <Typography variant="h5" gutterBottom sx={{ color: '#008080', marginBottom: '20px' }}>
+        Welcome to Music Mates
+      </Typography>
+      <Typography variant="body1" sx={{ color: '#008080', textAlign: 'center', maxWidth: '600px', marginBottom: '30px' }}>
+        Sync and share your music in real-time with friends, creating collaborative playlists and democratically controlling the vibe with a group voting feature. Join a room, queue songs, and enjoy a unified listening experience with those around you!
+      </Typography>
+      <Box sx={{ display: 'flex' }}>
+        <CustomLink to='/signin'>
           <Button 
-          sx={{
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            padding: '10px 20px',
-            cursor: 'pointer',
-          }}
-          variant='contained' color='secondary' type='button'>
+            variant='contained' 
+            sx={{ bgcolor: '#40e0d0', color: 'white', '&:hover': { bgcolor: '#40e0d0', opacity: [0.9, 0.8, 0.7] } }}
+          >
             Sign In
           </Button>
-        </Link>
-        <Link to='/signup'>
-          <Button variant='contained' color='secondary' type='button'>
+        </CustomLink>
+        <CustomLink to='/signup'>
+          <Button 
+            variant='contained' 
+            sx={{ bgcolor: '#ff7f50', color: 'white', '&:hover': { bgcolor: '#ff7f50', opacity: [0.9, 0.8, 0.7] } }}
+          >
             Sign Up
           </Button>
-        </Link>
-    </div>
+        </CustomLink>
+      </Box>
+    </PageContainer>
   );
 }
 
 export default Landing;
-

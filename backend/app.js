@@ -95,9 +95,21 @@ io.on('connection', (socket) => {
 
    socket.on('player_state_changed', (playerState) => {
       console.log('Spotify player state changed reading in server ');
-      console.log(playerState);
+    
       //io.broadcast.emit('update_player_state', playerState);
-      socket.broadcast.emit('update_player_state', playerState);
+      // socket.broadcast.emit('update_player_state', playerState);
+      console.log('Player State:', playerState);
+      console.log('Track Window:', playerState.state.track_window);
+     
+     
+     
+     
+      socket.broadcast.emit('update_player_state', {
+         current_track: playerState.state.track_window.current_track.uri,
+         next_tracks: playerState.state.track_window.next_tracks,
+         paused: playerState.state.paused,
+         position: playerState.state.position
+       });
 
     });
  

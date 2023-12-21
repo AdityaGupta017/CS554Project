@@ -50,6 +50,16 @@ router
     }
   });
 
+  router.route('/publicRooms').get(async (req, res) => {
+    console.log('into get PUBLIC ROOMS route');
+    try {
+      const roomList = await roomData.getAllPublicRooms();
+      return res.json(roomList);
+    } catch (e) {
+      return res.status(500).json({ error: e });
+    }
+  });
+  
 router
   .route('/:id')
   .get(async (req, res) => {
@@ -67,6 +77,9 @@ router
       return res.status(404).json({error: e});
     }
   })
+
+
+  
 //   .put(async (req, res) => {
 //     const updatedData = req.body;
 //     //make sure there is something in the req.body

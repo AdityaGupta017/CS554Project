@@ -18,10 +18,10 @@ const SignOut = () => {
       // Clear Spotify tokens and related data
       clearSpotifyTokens();
       
-      // Log out from your app (if applicable)
+      
       await doSignOut();
 
-      // Perform your app-specific logout actions here
+      
       await axios.get('http://localhost:3000/usersData/logout');
       
       // Redirect to the Spotify logout URL

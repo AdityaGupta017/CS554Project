@@ -27,7 +27,9 @@ function WebPlayback(props) {
 	const [player, setPlayer] = useState(undefined);
 	const [current_track, setTrack] = useState(track);
 	const [queue, setQueue] = useState([]);
+	const [selfUpdate, setSelfUpdate] = useState(true)
 	const deviceID = useRef(null);
+	// const [playBackState, setPlayBackState] = useState(undefined)
 
 	// const [playbackResponse, setPlaybackResponse] = useState(undefined)
 
@@ -38,53 +40,72 @@ function WebPlayback(props) {
 	// // console.log(props.playerState)
 
 	
-	
+	let shouldEmit = true
 
 
 
 	useEffect(() => {
 		console.log('inside my useEffect myplayerstate update')
-		// const syncPlayback = async () => {
-		//   try {
+		
 			    console.log('recieved updated state in WebPlayback')
                 console.log(props.playerState)
-
-
-
-                if (props.playerState && props.playerState.track_window) {
-					// Proceed with updating state
-					setTrack(props.playerState.track_window.current_track);
-					setQueue(props.playerState.track_window.next_tracks.slice(0, 5));
-					setPaused(props.playerState.paused);
-				  } else {
-					console.log('not able to set track')
-				  }
-			    
 				
-			// // Assume that props.playbackState contains the position in milliseconds
-			// const position_ms = props.playbackState.position_ms;
-			
-			// // Your POST request to seek playback
-			// const response = await axios.post('/api/seek-playback', {
-			//   position_ms: position_ms,
-			//   // You might need to send other data, such as a device ID or track ID
-			// });
 
-			// const { data } = await axios.post('/api/playback-state', {time: props.playerState.position});
-            // console.log('my playback data::::::')
-			// console.log(data);
-		// 	// setPlaybackResponse(data)
-	  
-		// 	console.log('Playback seeked successfully:');
-		// 	console.log(data);
-		//   } catch (error) {
-		// 	console.error('Error seeking playback:', error);
-		//   }
-		// };
-	  
-		// if (props.playbackState) {
-		// 	syncPlayback();
-		// }
+				const fetchData = async () => {
+					console.log('called fetchdata in useeffect:::: ')
+					let test = [props.playerState.current_track];
+
+					if (props.playerState.paused) {
+						player.togglePlay()
+						return
+					}
+
+					
+					try {
+
+						
+							let test2 = props.playerState.next_tracks.map(track => track.uri);
+							test = [props.playerState.current_track, ...test2]
+						
+						console.log('my uris::::')
+						console.log(test)
+						
+						    
+							const { data } = await axios.post('/api/set-track', {
+								trackUris: test,
+								position: props.playerState.position
+								
+							});
+
+							// setTimeout(() => {
+							// 	if (props.playerState.paused === true) {
+							// 		player.pause().then(() => {
+							// 			console.log('Paused!');
+							// 		  });
+							// 	}
+							// }, 300);
+							
+
+							
+							
+							
+							console.log(data);
+
+							
+						
+
+					
+					} catch (error) {
+						setSelfUpdate(true)
+						console.log(error);
+					}
+				};
+
+                
+			    
+				fetchData()
+				
+
 		
 	  }, [props.playerState]); // Effect will re-run if props.playbackState changes
 	  
@@ -118,7 +139,7 @@ function WebPlayback(props) {
 			});
 
 			player.addListener('player_state_changed', ( async state => {
-
+				console.log('listener function player_state_changed')
 				
 			
 				if (!state) {
@@ -134,16 +155,11 @@ function WebPlayback(props) {
 				player.getCurrentState().then(state => {
 					(!state) ? setActive(false) : setActive(true)
 				});
-				counter += 1
-				console.log('inside player state changed:')
-				console.log(counter)
-				console.log(state)
 
-				 // Emit the current state to the server through the socket
-				 props.socketRef.current.emit('player_state_changed', {
-					state
-					// Include other relevant state information
-				  });
+				console.log('inside listener::::::')
+				console.log(state)
+				
+				 
 
 			}));
 
@@ -154,6 +170,13 @@ function WebPlayback(props) {
 		
 
 	}, []);
+
+	const emitPlayerState = (state) => {
+		console.log('emit playerstatechanged called:::::')
+					props.socketRef.current.emit('player_state_changed', {
+						state
+					  });
+	}
 
 	// API Call to get Playback State 
 	// SetInterval to retrieve state every x seconds
@@ -231,17 +254,99 @@ function WebPlayback(props) {
 								<div className="now-playing__name">{current_track.name}</div>
 								<div className="now-playing__artist">{current_track.artists[0].name}</div>
 
-								<button className="btn-spotify" onClick={() => { player.previousTrack() }} >
+								{props.isHost && (
+          <>
+           <button className="btn-spotify" onClick={() => { 
+									// setSelfUpdate(true)
+									player.previousTrack() 
+									setTimeout(() => {
+										player.getCurrentState().then(mystate => {
+											console.log('after previous track')
+											console.log(mystate)
+											emitPlayerState(mystate)
+											props.handleHostPlayerAction('Host skipped to previous song in queue')
+										});
+									}, 100);
+									}} >
 									&lt;&lt;
 								</button>
 
-								<button className="btn-spotify" onClick={() => { player.togglePlay() }} >
+								<button className="btn-spotify" onClick={() => {
+									//  setSelfUpdate(true)
+									 player.togglePlay() 
+									 
+									 // Set a delay of 100 milliseconds (adjust as needed)
+									setTimeout(() => {
+										player.getCurrentState().then(mystate => {
+											console.log('after toggle play')
+											console.log(mystate)
+											emitPlayerState(mystate)
+										});
+										props.handleHostPlayerAction('Host toggled play state of song')
+									}, 100);
+									 }} >
+									{is_paused ? "PLAY" : "PAUSE"}
+									
+								</button>
+
+								<button className="btn-spotify" onClick={() => { 
+									// setSelfUpdate(true)
+									player.nextTrack() 
+									setTimeout(() => {
+										player.getCurrentState().then(mystate => {
+											console.log('after next track')
+											console.log(mystate)
+											emitPlayerState(mystate)
+										});
+										props.handleHostPlayerAction('Host skipped to next song in queue')
+									}, 100);
+									}} >
+									&gt;&gt;
+								</button>
+          </>
+        )}
+								{/* <button className="btn-spotify" onClick={() => { 
+									// setSelfUpdate(true)
+									player.previousTrack() 
+									setTimeout(() => {
+										player.getCurrentState().then(mystate => {
+											console.log('after previous track')
+											console.log(mystate)
+											emitPlayerState(mystate)
+										});
+									}, 100);
+									}} >
+									&lt;&lt;
+								</button>
+
+								<button className="btn-spotify" onClick={() => {
+									//  setSelfUpdate(true)
+									 player.togglePlay() 
+									 // Set a delay of 100 milliseconds (adjust as needed)
+									setTimeout(() => {
+										player.getCurrentState().then(mystate => {
+											console.log('after toggle play')
+											console.log(mystate)
+											emitPlayerState(mystate)
+										});
+									}, 100);
+									 }} >
 									{is_paused ? "PLAY" : "PAUSE"}
 								</button>
 
-								<button className="btn-spotify" onClick={() => { player.nextTrack() }} >
+								<button className="btn-spotify" onClick={() => { 
+									// setSelfUpdate(true)
+									player.nextTrack() 
+									setTimeout(() => {
+										player.getCurrentState().then(mystate => {
+											console.log('after next track')
+											console.log(mystate)
+											emitPlayerState(mystate)
+										});
+									}, 100);
+									}} >
 									&gt;&gt;
-								</button>
+								</button> */}
 							</div>
 
                             <div>
@@ -279,204 +384,3 @@ function WebPlayback(props) {
 
 export default WebPlayback
 
-// import { useState, useEffect, useRef } from 'react';
-// import SearchModal from './search/SearchModal';
-
-// import DeviceContext from '../context/DeviceContext';
-// import axios from 'axios';
-
-// const track = {
-// 	name: "",
-// 	album: {
-// 		images: [
-// 			{ url: "" }
-// 		]
-// 	},
-// 	artists: [
-// 		{ name: "" }
-// 	]
-// }
-
-// function WebPlayback(props) {
-
-// 	const [is_paused, setPaused] = useState(false);
-// 	const [is_active, setActive] = useState(false);
-// 	const [player, setPlayer] = useState(undefined);
-// 	const [current_track, setTrack] = useState(track);
-// 	const [queue, setQueue] = useState([]);
-// 	const deviceID = useRef(null);
-
-// 	const [showSearchModal, setShowSearchModal] = useState(false);
-
-// 	useEffect(() => {
-
-// 		const script = document.createElement("script");
-// 		script.src = "https://sdk.scdn.co/spotify-player.js";
-// 		script.async = true;
-
-// 		document.body.appendChild(script);
-
-// 		window.onSpotifyWebPlaybackSDKReady = () => {
-
-// 			const player = new window.Spotify.Player({
-// 				name: 'Web Playback SDK',
-// 				getOAuthToken: cb => { cb(props.token); },
-// 				volume: 0.5
-// 			});
-
-// 			setPlayer(player);
-
-// 			player.addListener('ready', ({ device_id }) => {
-// 				console.log('Ready with Device ID', device_id);
-// 				deviceID.current = device_id;
-// 				fetchData(device_id);
-// 			});
-
-// 			player.addListener('not_ready', ({ device_id }) => {
-// 				console.log('Device ID has gone offline', device_id);
-// 			});
-
-// 			player.addListener('player_state_changed', ( async state => {
-
-// 				if (!state) {
-// 					return;
-// 				}
-
-// 				setTrack(state.track_window.current_track);
-// 				setQueue(state.track_window.next_tracks.slice(0, 5));
-// 				setPaused(state.paused);
-
-
-
-// 				player.getCurrentState().then(state => {
-// 					(!state) ? setActive(false) : setActive(true)
-// 				});
-
-// 			}));
-
-// 			player.connect();
-
-// 		};
-
-
-// 	}, []);
-
-// 	// API Call to get Playback State 
-// 	// SetInterval to retrieve state every x seconds
-
-// 	// const getPlaybackState = async () => {
-// 	// 	try {
-// 	// 		const { data } = await axios.get('/api/playback-state');
-
-// 	// 		console.log(data);
-// 	// 	} catch (error) {
-// 	// 		console.log(error);
-// 	// 	}
-// 	// };
-
-// 	// setInterval(() => {
-// 	// 	console.log('Getting Playback State');
-// 	// 	getPlaybackState();
-// 	// }, 60000);
-	
-// 	const fetchData = async (deviceId) => {
-// 		try {
-// 			const { data } = await axios.post('/api/transfer-playback', {
-// 				deviceId: deviceId
-// 			});
-
-// 			console.log(data);
-// 		} catch (error) {
-// 			console.log(error)
-// 		}
-// 	}
-
-// 	const handleCloseModals = () => {
-// 		setShowSearchModal(false);
-// 	}
-
-// 	if (!is_active) {
-// 		return (
-// 			<>
-// 			<DeviceContext.Provider value={{ deviceID: deviceID.current }}>
-// 				<div className="container">
-// 					<div className="main-wrapper">
-// 						<b> Instance not active. Transfer your playback using your Spotify app </b>
-// 					</div>
-
-// 					<div>
-// 						<button onClick={() => { setShowSearchModal(true); }}>
-// 							Search for Songs
-// 						</button>
-// 					</div>
-
-// 					{showSearchModal && (
-// 						<SearchModal 
-// 							isOpen={showSearchModal}
-// 							handleClose={handleCloseModals}
-// 						/>
-// 					)}
-// 				</div>
-// 			</DeviceContext.Provider>
-// 			</>)
-// 	} else {
-// 		return (
-// 			<>
-// 				<DeviceContext.Provider value={{ deviceID: deviceID.current }}>
-// 					<div className="container">
-// 						<div className="main-wrapper">
-
-// 							<img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
-
-// 							<div className="now-playing__side">
-// 								<div className="now-playing__name">{current_track.name}</div>
-// 								<div className="now-playing__artist">{current_track.artists[0].name}</div>
-
-// 								<button className="btn-spotify" onClick={() => { player.previousTrack() }} >
-// 									&lt;&lt;
-// 								</button>
-
-// 								<button className="btn-spotify" onClick={() => { player.togglePlay() }} >
-// 									{is_paused ? "PLAY" : "PAUSE"}
-// 								</button>
-
-// 								<button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-// 									&gt;&gt;
-// 								</button>
-// 							</div>
-
-//                             <div>
-// 								<button onClick={() => { setShowSearchModal(true); }}>
-// 									Search for Songs
-// 								</button>
-// 							</div>
-
-// 							<div className='queued_songs_list'>
-// 								<h4>Queued Songs</h4>
-// 								{queue.map(track => {
-// 									return (
-// 										<div key={track.uri}>
-// 											<img src={track.album.images[1].url}/>
-// 											<div className="queue__name">{track.name}</div>
-// 											<div className="queue__artist">{track.artists[0].name}</div>
-// 										</div>
-// 									)
-// 								})}
-// 							</div>
-
-// 							{showSearchModal && (
-// 								<SearchModal 
-// 									isOpen={showSearchModal}
-// 									handleClose={handleCloseModals}
-// 								/>
-// 							)}
-// 						</div>
-// 					</div>
-// 				</DeviceContext.Provider>
-// 			</>
-// 		);
-// 	}
-// }
-
-// export default WebPlayback
-// >>>>>>> main

@@ -1,21 +1,28 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  overflow: auto; /* Add scrolling if content overflows */
+  padding: 0;
+  margin: 0;
+  background-color: #ffe4e1; /* Misty Rose background */
 }
 
+.App {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #40e0d0aa); /* Turquoise shadow */
 }
 
 @keyframes logo-spin {
@@ -35,97 +42,116 @@
 
 .card {
   padding: 2em;
+  background-color: #ffe4e1; /* Misty Rose for cards */
+  box-shadow: 0 4px 15px 0 rgba(13, 144, 98, 0.2), 0 6px 20px 0 rgba(10, 156, 149, 0.19);
+  animation: fadeIn 2s ease-out;
+  padding: 2em;
+  background-color: #ffe4e1;
 }
 
 .read-the-docs {
-  color: #888;
+  color: #008080; /* Teal text */
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .heading {
-  height: 60px; /* Set the desired fixed height */
+  animation: bounce 2s infinite;
+  height: 60px;
   overflow: hidden;
 }
 
 .dashboard {
-  color: white;
-  background-color: #1a1a1a;
+  color: #ff7f50; /* Coral text */
+  background-color: #008080; /* Teal background */
   text-align: center;
   padding: 20px;
 }
-
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
 button {
-  background-color: #4CAF50;
+  background-color: #40e0d0; /* Turquoise buttons */
   color: white;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
+  transition: background-color 0.3s;
+  &:hover {
+    animation: pulse 1.5s infinite;
+    background-color: #ff7f50;
+  }
+}
+
+button:hover {
+  background-color: #ff7f50; /* Coral on hover */
 }
 
 .button-secondary {
   background-color: #ffffff;  
-  color: #4CAF50;
+  color: #008080; /* Teal text */
 }
 
-/* Basic styling for form input fields */
 .form-control {
   display: block;
   width: 25em;
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
-  color: #495057;
+  color: #008080; /* Teal text */
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 1px solid #40e0d0; /* Turquoise border */
   border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* Optional: Add focus styles */
 .form-control:focus {
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-/* Optional: Add styles for invalid input */
-.form-control:invalid {
-  border-color: #80bdff;
+  border-color: #ff7f50; /* Coral border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(255, 127, 80, 0.25); /* Coral glow */
 }
 
 
-
-/*
-
-h1 {
-  font-size: 2em;
-  Add more styling to match the design
-}
-
-h2 {
-  font-size: 1.5em;
-  
-}
-
-.room-code-input {
-  margin: 20px 0;
-  
-}
-
-.room-code-input input {
-  margin-right: 10px;
-  
-}
-
-button {
-  background-color: #4CAF50;
+.App-header {
+  background-color: #008080; /* Teal background */
+  padding: 20px;
+  text-align: center;
   color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  
 }
 
-.create-room-button {
-  /* Additional styling for the create room button if different from the join button 
+.app-name {
+  font-size: 2rem;
+  color: #ff7f50; /* Coral text */
 }
- */
+
+.app-name:hover {
+  color: #40e0d0; /* Turquoise on hover */
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .app-name {
+    font-size: 1.5rem;
+  }
+}
+
+.html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Prevents scrolling outside the #root element */
+}
+
+.fullScreenComponent {
+  height: 100vh;
+  width: 100vw;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

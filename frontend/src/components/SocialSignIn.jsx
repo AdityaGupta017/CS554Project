@@ -1,6 +1,8 @@
 import React from 'react';
 import  {doSocialSignIn} from '../firebase/FirebaseFunctions';
 import axios from 'axios';
+import GoogleIcon from '@mui/icons-material/Google';
+import {Button} from '@mui/material';
 
 const SocialSignIn = () => {
   const socialSignOn = async () => {
@@ -25,12 +27,21 @@ const SocialSignIn = () => {
     }
   };
   return (
-    <div>
-      <img
-        onClick={() => socialSignOn()}
-        alt='google signin'
-        src='/imgs/btn_google_signin.png'
-      />
+    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+      <Button 
+        variant="contained" 
+        onClick={socialSignOn} 
+        startIcon={<GoogleIcon />}
+        style={{ 
+          backgroundColor: '#008080', 
+          color: 'white',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          padding: '10px 20px',
+        }}
+      >
+        Sign in with Google
+      </Button>
     </div>
   );
 };
