@@ -1,10 +1,5 @@
 
 
-
-
-
-
-
 import express from 'express'; // Express web server framework
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -39,7 +34,6 @@ Generates a random string containing numbers and letters
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {cors: {origin: '*'}});
-app.use("/public",stat)
 
 
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
@@ -48,7 +42,7 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
       delete req.body._method
    }
 }
-
+app.use(express.static("public"));
 
 // app.use(express.static(dirname + '/public'))
 
@@ -71,20 +65,16 @@ app.set('views', path.join(__dirname, 'spotify/views'));
 
 
 
-   // app.engine('handlebars', exphbs.engine({
-//    defaultLayout: 'main',
-//    layoutsDir: path.join(__dirname, 'spotify/views/layouts')
-//  }));
+
 app.engine('handlebars', exphbs.engine({
    defaultLayout: 'main',
    layoutsDir: path.join(__dirname, 'spotify/views/layouts')
  }));
- 
- app.set('view engine', 'handlebars');
-// app.get('/', middleware.hasCookie);
-// app.get('/users/dashboard', middleware.noCookie);
 
 
+app.use("/*", (req, res) => {
+   res.sendFile(path.join(__dirname, "/public/index.html"))
+})
 
 configRoutes(app);
 configRoutes2(app);
