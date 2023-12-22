@@ -97,7 +97,7 @@ function CreateRoomModal(props) {
     
     
     try {
-        const response = await axios.post('http://localhost:3000/rooms', {
+        const response = await axios.post('https://backend.musicmates.club/rooms', {
             title: roomName, adminID: props.currentUser.uid, isPrivate: !isPublic
     });
     const createdRoom = response.data;

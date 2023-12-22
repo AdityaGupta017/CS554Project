@@ -1,86 +1,4 @@
 
-// import express from 'express'; // Express web server framework
-// import session from 'express-session';
-// import cookieParser from 'cookie-parser';
-// import cors from 'cors';
-// import configRoutes from './spotify/routes/index.js';
-
-// import { fileURLToPath } from 'url';
-// import path from 'path';
-// import exphbs from 'express-handlebars';
-
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const stat = express.static(__dirname+"/public")
-// /**
-//  * Generates a random string containing numbers and letters
-//  * @param  {number} length The length of the string
-//  * @return {string} The generated string
-//  */
-
-
-
-// const app = express();
-// app.use("/public",stat)
-
-
-// const rewriteUnsupportedBrowserMethods = (req, res, next) => {
-//    if (req.body && req.body._method) {
-//       req.method = req.body._method
-//       delete req.body._method
-//    }
-// }
-
-
-// // app.use(express.static(__dirname + '/public'))
-
-// app.use(cors())
-//    .use(cookieParser())
-//    .use(express.json())
-//    .use(express.urlencoded({ extended: true }))
-//    .use(session({
-//       name: 'AuthCookie',
-//       secret: 'Secret!',
-//       resave: false,
-//       saveUninitialized: false,
-//    }));
-
-// app.set('views', path.join(__dirname, 'spotify/views'));
-// app.engine('handlebars', exphbs.engine({
-//    defaultLayout: 'main',
-//    layoutsDir: path.join(__dirname, 'spotify/views/layouts')
-//  }));
- 
-//  app.set('view engine', 'handlebars');
-// // app.get('/', middleware.hasCookie);
-// // app.get('/users/dashboard', middleware.noCookie);
-
-
-
-// configRoutes(app);
-// app.listen(3000, () => {
-//       console.log("We've now got a server!");
-//       console.log('Your routes will be running on http://localhost:3000');
-// })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import express from 'express'; // Express web server framework
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
@@ -93,7 +11,6 @@ import path from 'path';
 import exphbs from 'express-handlebars';
 import {createServer} from 'http';
 import {Server} from 'socket.io';
-
 
 
 
@@ -116,7 +33,6 @@ Generates a random string containing numbers and letters
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {cors: {origin: '*'}});
-app.use("/public",stat)
 
 
 const rewriteUnsupportedBrowserMethods = (req, res, next) => {
@@ -125,7 +41,7 @@ const rewriteUnsupportedBrowserMethods = (req, res, next) => {
       delete req.body._method
    }
 }
-
+app.use(express.static("public"));
 
 // app.use(express.static(dirname + '/public'))
 
@@ -148,27 +64,20 @@ app.set('views', path.join(__dirname, 'spotify/views'));
 
 
 
-   // app.engine('handlebars', exphbs.engine({
-//    defaultLayout: 'main',
-//    layoutsDir: path.join(__dirname, 'spotify/views/layouts')
-//  }));
+
 app.engine('handlebars', exphbs.engine({
    defaultLayout: 'main',
    layoutsDir: path.join(__dirname, 'spotify/views/layouts')
  }));
- 
- app.set('view engine', 'handlebars');
-// app.get('/', middleware.hasCookie);
-// app.get('/users/dashboard', middleware.noCookie);
 
 
+app.use("/*", (req, res) => {
+   res.sendFile(path.join(__dirname, "/public/index.html"))
+})
 
 configRoutes(app);
 configRoutes2(app);
 
-let likeCount = 0;
-let dislikeCount = 0;
-const userVotes = new Map(); // Map to track user votes
 io.on('connection', (socket) => {
    console.log('new client connected', socket.id);
  
@@ -202,34 +111,16 @@ io.on('connection', (socket) => {
        });
 
     });
-
-    socket.on('like', ({ roomId }) => {
-      if (!userVotes.has(socket.id)) {
-        likeCount += 1;
-        userVotes.set(socket.id, 'like');
-        console.log('Current likeCount', likeCount);
-        io.emit('poll_update', { likes: likeCount, dislikes: dislikeCount });
-      }
-    });
-  
-    socket.on('dislike', ({ roomId }) => {
-      if (!userVotes.has(socket.id)) {
-        dislikeCount += 1;
-        userVotes.set(socket.id, 'dislike');
-        console.log('Current DislikeCount', likeCount);
-        io.emit('poll_update', { likes: likeCount, dislikes: dislikeCount });
-      }
-    });
-
-   // io.to(roomId).emit('poll_update', { likes, dislikes });
-
  
    socket.on('disconnect', () => {
      console.log('Disconnect Fired');
    });
  });
 
-httpServer.listen(3000, () => {
-   console.log(`listening on *:${3000}`);
- });
+ let port = 3000
 
+httpServer.listen(port, () => {
+      console.log("We've now got a server!");
+      console.log(`Your routes will be running on http://localhost:${port}`); 
+   
+   });

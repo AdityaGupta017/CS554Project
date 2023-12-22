@@ -70,7 +70,7 @@ function Profile() {
   
 
       await doChangePassword(currentUser.email, currentPassword, newPassword);
-      const result = await axios.post('http://localhost:3000/usersData/PasswordUpdate', {
+      const result = await axios.post('https://backend.musicmates.club/usersData/PasswordUpdate', {
         email: currentUser.email,
         password: newPassword
       });
@@ -106,7 +106,7 @@ function Profile() {
       }
 
       await updateProfile(currentUser, { displayName: newName });
-      const result = await axios.post('http://localhost:3000/usersData/NameUpdate', {
+      const result = await axios.post('https://backend.musicmates.club/usersData/NameUpdate', {
         name: newName,
         email: currentUser.email
       });
