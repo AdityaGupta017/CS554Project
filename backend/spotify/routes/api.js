@@ -56,7 +56,7 @@ router.post('/search', async (req, res) => {
 		// Recieving 400 status from Spotify API means 'No search query'
 		// Return an empty array when there is no value in the search bar
 		if(error.response && error.response.data && error.response.data.error.status === 400) {
-			return res.send([]);
+			return res.send([]);	
 		}
 	}
 
